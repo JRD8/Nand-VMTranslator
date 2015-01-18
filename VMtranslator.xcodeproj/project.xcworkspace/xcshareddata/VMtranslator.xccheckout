@@ -10,31 +10,31 @@
 	<string>VMtranslator</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>48CC1E5383E60A8B71C0DA4DA38D93121D26081D</key>
-		<string>https://github.com/JRD8/Nand2Tetris-VM-Translator.git</string>
+		<key>861F56E35929C304A9FB1831D5A4E5B1652A50AB</key>
+		<string>ssh://github.com/JRD8/Nand-VMTranslator.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>VM Translator/VMtranslator.xcodeproj</string>
+	<string>VMtranslator.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>48CC1E5383E60A8B71C0DA4DA38D93121D26081D</key>
-		<string>../../..</string>
+		<key>861F56E35929C304A9FB1831D5A4E5B1652A50AB</key>
+		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/JRD8/Nand2Tetris-VM-Translator.git</string>
+	<string>ssh://github.com/JRD8/Nand-VMTranslator.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>48CC1E5383E60A8B71C0DA4DA38D93121D26081D</string>
+	<string>861F56E35929C304A9FB1831D5A4E5B1652A50AB</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>48CC1E5383E60A8B71C0DA4DA38D93121D26081D</string>
+			<string>861F56E35929C304A9FB1831D5A4E5B1652A50AB</string>
 			<key>IDESourceControlWCCName</key>
-			<string>Nand2Tetris%20JRD%20Utilities</string>
+			<string>Nand-VMTranslator</string>
 		</dict>
 	</array>
 </dict>

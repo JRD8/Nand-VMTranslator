@@ -318,9 +318,9 @@ def writePushPop (command, segment, index):
         
         if segment == "pointer": # POINTER routines
             out_file.write("// pop pointer " + arg2(current_command) + "\n") # Comment line
-            if arg2(current_command) == "0": # THIS subroutine
+            if arg2(current_command) == "0 ": # THIS subroutine
                 insert1 = "THIS"
-            if arg2(current_command) == "1": # THAT subroutine
+            if arg2(current_command) == "1 ": # THAT subroutine
                 insert1 = "THAT"
             code_snippet = "@SP\nA=M-1\nD=M\nM=0\n@" + insert1 + "\nM=D\n@SP\nM=M-1\n"
             out_file.write(code_snippet)
