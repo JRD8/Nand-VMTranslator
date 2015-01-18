@@ -357,10 +357,11 @@ def writePushPop (command, segment, index):
 def writeLabel(label):
     
     global current_command
+    global current_function_name
     
     out_file.write("// write label " + arg1(current_command) + "\n") # Comment line
     insert1 = arg1(current_command)
-    code_snippet = "($" + insert1 + ")\n"
+    code_snippet = "(" + current_function_name + "$" + insert1 + ")\n"
     out_file.write(code_snippet)
     return
 
@@ -371,7 +372,7 @@ def writeGoto(label):
     
     out_file.write("// write goto " + arg1(current_command) + "\n") # Comment line
     insert1 = arg1(current_command)
-    code_snippet = "@$" + insert1 + "\n0;JMP\n"
+    code_snippet = "@" + current_function_name + "$" + insert1 + "\n0;JMP\n"
     out_file.write(code_snippet)
     return
 
@@ -382,7 +383,7 @@ def writeIf(label):
     
     out_file.write("// write if-goto " + arg1(current_command) + "\n") # Comment line
     insert1 = arg1(current_command)
-    code_snippet = "@SP\nA=M-1\nD=M\nM=0\n@SP\nM=M-1\n@$" + insert1 + "\nD;JNE\n"
+    code_snippet = "@SP\nA=M-1\nD=M\nM=0\n@SP\nM=M-1\n@" + current_function_name + "$" + insert1 + "\nD;JNE\n"
     out_file.write(code_snippet)
     return
 
@@ -417,6 +418,7 @@ line_number = 0
 # Strings
 current_command = ""
 static_filename = ""
+current_function_name = "NULL"
 
 
 # Import text from command line script
