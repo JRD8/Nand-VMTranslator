@@ -2,7 +2,6 @@
 ## JRD VM TRANSLATOR ##
 #######################
 
-#Latest#
 
 ## PARSER MODULE ##
 
