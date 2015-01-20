@@ -91,7 +91,12 @@ def process_file(source_file):
             writeGoto(arg1(current_command))
         if commandType(current_command) == "C_IF":
             writeIf(arg1(current_command))
+        if commandType(current_command) == "C_FUNCTION":
+            writeFunction(arg1(current_command), arg2(current_command))
+        if commandType(current_command) == "C_RETURN":
+            writeReturn()
 
+        # Add if C_CALL here
 
         print "\n"
         line_number = line_number + 1
@@ -385,6 +390,25 @@ def writeIf(label):
     insert1 = arg1(current_command)
     code_snippet = "@SP\nA=M-1\nD=M\nM=0\n@SP\nM=M-1\n@" + current_function_name + "$" + insert1 + "\nD;JNE\n"
     out_file.write(code_snippet)
+    return
+
+
+def writeFunction(functionName, numLocals):
+
+    global current_command
+    global current_function_name
+
+    current_function_name = functionName
+
+    out_file.write("// write function " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
+    code_snippet = "(" + current_function_name + ")\n@" + numLocals + "\nD=A\n@5\nM=D\n@6\nM=0\n(" + current_function_name + "$InitLocals)\n@LCL\nD=M\n@6\nD=D+M\n@7\nM=D\nD=0\n@7\nA=M\nM=D\n@6\nM=M+1\nD=M\n@5\n@" + current_function_name + "$InitLocals\nD;JGT\n"
+    out_file.write(code_snippet)
+    return
+
+def writeReturn():
+
+    out_file.write("// write return\n") # Comment line
+    # TODO: ADD RETURN CODE SNIPPET
     return
 
 
