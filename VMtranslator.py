@@ -78,8 +78,10 @@ def process_file(source_file):
         current_command = advance(code_lines, line_number)
         print "Current Command: " + current_command
         print "Current Command Type: " + commandType(current_command)
-        print "Current Arg1: " + arg1(current_command)
-        print "Current Arg2: " + arg2(current_command)
+        
+        if commandType(current_command) != "C_RETURN": # "C_RETURN" has NO arguments
+            print "Current Arg1: " + arg1(current_command)
+            print "Current Arg2: " + arg2(current_command)
     
         if commandType(current_command) == "C_PUSH" or commandType(current_command) == "C_POP":
             writePushPop(commandType(current_command), arg1(current_command), arg2(current_command))
@@ -401,7 +403,7 @@ def writeFunction(functionName, numLocals):
     current_function_name = functionName
 
     out_file.write("// write function " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
-    code_snippet = "(" + current_function_name + ")\n@" + numLocals + "\nD=A\n@5\nM=D\n@6\nM=0\n(" + current_function_name + "$InitLocals)\n@LCL\nD=M\n@6\nD=D+M\n@7\nM=D\nD=0\n@7\nA=M\nM=D\n@6\nM=M+1\nD=M\n@5\n@" + current_function_name + "$InitLocals\nD;JGT\n"
+    code_snippet = "(" + current_function_name + ")\n@" + numLocals + "\nD=A\n@5\nM=D\n@6\nM=0\n(" + current_function_name + "$InitLocals)\n@LCL\nD=M\n@6\nD=D+M\n@7\nM=D\nD=0\n@7\nA=M\nM=D\n@6\nM=M+1\nD=M\n@5\nD=M-D\n@" + current_function_name + "$InitLocals\nD;JGT\n"
     out_file.write(code_snippet)
     return
 
