@@ -28,6 +28,8 @@ def input_eval(source_input):
 
 
 def process_input(source_input, input_type, source_path):
+    
+    writeInit() # Process bootstrap code
 
     if input_type == "file":
         process_file(source_input)
@@ -50,9 +52,6 @@ def process_file(source_file):
         out_file.write("// " + line + "\n")
     out_file.write("\n\n") # ...And some carriage returns
     out_file.write("// OBJECT ASM CODE FOR: " + source_file + "\n\n")
-
-    # TODO: WRITE BOOTSTRAP CODE HERE...
-    out_file.write("// Bootstrap Code\n")
 
     # Begin iterating through commands to translate
     line_number = 0
@@ -185,7 +184,9 @@ def arg2(current_command):
     return current_command[start + 1:]
 
 
+
 ## CODEWRITER MODULE ##
+
 
 def codewriterConstructor(source_name):
     
@@ -208,8 +209,13 @@ def codewriterConstructor(source_name):
     return out_file
 
 
-def setFilename(out_file): ## NOT USED
+def setFilename(out_file): ## NOT USED, although discussed in book
     return
+
+
+
+# Chapter 7 Functions
+
 
 
 def writeArithmetic(command):
@@ -256,6 +262,7 @@ def writeArithmetic(command):
         code_snippet = insert1 + "@SP\nA=M\nA=A-1\nA=A-1\nD=M\nA=A+1\n" + insert2 + "\nM=0\nA=A-1\nM=D\n@0\nM=M-1\n"
         out_file.write(code_snippet)
         return
+
 
 
 def writePushPop (command, segment, index):
@@ -364,6 +371,20 @@ def writePushPop (command, segment, index):
         out_file.write(code_snippet)
         return
 
+
+# Chapter 8 Functions
+
+
+
+def writeInit(): # Writes Bootstrap Code command
+    
+    out_file.write("// Bootstrap Code:\n")
+    code_snippet = "@256\nD=A\n@SP\nM=D\ncall Sys.init 0\n"
+    out_file.write(code_snippet)
+    return
+
+
+
 def writeLabel(label):
     
     global current_command
@@ -376,7 +397,8 @@ def writeLabel(label):
     return
 
 
-def writeGoto(label):
+
+def writeGoto(label): # Writes C_GOTO (goto) command
     
     global current_command
     
@@ -387,7 +409,8 @@ def writeGoto(label):
     return
 
 
-def writeIf(label):
+
+def writeIf(label): # Writes C_IF (if-goto) command
     
     global current_command
     
@@ -398,20 +421,22 @@ def writeIf(label):
     return
 
 
-def writeFunction(functionName, numLocals):
 
+def writeCall(functionName, numArgs): # Writes C_CALL command
+    
     global current_command
     global current_function_name
-
+    
     current_function_name = functionName
-
-    out_file.write("// write function " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
-    code_snippet = "(" + current_function_name + ")\n@" + numLocals + "\nD=A\n@5\nM=D\n@6\nM=0\n(" + current_function_name + "$InitLocals)\n@LCL\nD=M\n@6\nD=D+M\n@7\nM=D\nD=0\n@7\nA=M\nM=D\n@6\nM=M+1\nD=M\n@5\nD=M-D\n@" + current_function_name + "$InitLocals\nD;JGT\n"
+    
+    out_file.write("// write call " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
+    code_snippet = "@" + functionName + "$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M\n@" + numArgs +"\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@" + functionName  + "\n0; JMP\n(" + functionName + "$return-address)\n"
     out_file.write(code_snippet)
     return
 
 
-def writeReturn():
+
+def writeReturn(): # Writes C_RETURN command
 
     out_file.write("// write return\n") # Comment line
     code_snippet = "@LCL\nD=M\n@7\nM=D\n@7\nD=M\n@5\nD=D-A\nA=D\nD=M\n@8\nM=D\n@SP\nA=M-1\nD=M\nM=0\n@SP\nM=M-1\n@ARG\nA=M\nM=D\n@ARG\nD=M\nD=D+1\n@SP\nM=D\n@7\nD=M\n@1\nD=D-A\nA=D\nD=M\n@THAT\nM=D\n@7\nD=M\n@2\nD=D-A\nA=D\nD=M\n@THIS\nM=D\n@7\nD=M\n@3\nD=D-A\nA=D\nD=M\n@ARG\nM=D\n@7\nD=M\n@4\nD=D-A\nA=D\nD=M\n@LCL\nM=D\n@8\nA=M\n0;JMP\n"
@@ -419,15 +444,15 @@ def writeReturn():
     return
 
 
-def writeCall(functionName, numArgs):
-
+def writeFunction(functionName, numLocals): # Writes C_FUNCTION command
+    
     global current_command
     global current_function_name
     
     current_function_name = functionName
-
-    out_file.write("// write call " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
-    code_snippet = "@" + functionName + "$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M@" + numArgs +"\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@" + functionName  + "\n0; JMP\n(" + functionName + "$return-address)\n"
+    
+    out_file.write("// write function " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
+    code_snippet = "(" + current_function_name + ")\n@" + numLocals + "\nD=A\n@5\nM=D\n@6\nM=0\n(" + current_function_name + "$InitLocals)\n@LCL\nD=M\n@6\nD=D+M\n@7\nM=D\nD=0\n@7\nA=M\nM=D\n@6\nM=M+1\nD=M\n@5\nD=M-D\n@" + current_function_name + "$InitLocals\nD;JGT\n"
     out_file.write(code_snippet)
     return
 
