@@ -39,6 +39,7 @@ def process_input(source_input, input_type, source_path):
         import glob
         path = source_path
         files=glob.glob(path)
+
         for file in files:
             process_file(file)
     return
@@ -111,11 +112,13 @@ def process_file(source_file):
     return
 
 def parserConstructor(source_file):
+    
+    global code_lines
+    code_lines = []
 
     txt = open(source_file, 'r') # Open source_file to read
     initial_lines = txt.readlines() # Read the source file, by line, into initial_lines list
 
-    
     # Convert initial_lines to usable code lines, stripping out \r\n and comments
     for line in initial_lines:
         line = line.replace("\r\n", "")
