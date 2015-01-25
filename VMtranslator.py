@@ -51,6 +51,9 @@ def process_file(source_file):
     out_file.write("\n\n") # ...And some carriage returns
     out_file.write("// OBJECT ASM CODE FOR: " + source_file + "\n\n")
 
+    # TODO: WRITE BOOTSTRAP CODE HERE...
+    out_file.write("// Bootstrap Code\n")
+
     # Begin iterating through commands to translate
     line_number = 0
 
@@ -478,7 +481,7 @@ source_input = raw_input(">") # input source name
 #source_input = "StaticTest.vm"
 #source_input = "BasicLoop.vm"
 #source_input = "FibonacciSeries.vm"
-#source_input = "SimpleFunction.vm" STILL TO FINISH
+#source_input = "SimpleFunction.vm"
 
 
 # Open Source File or Directory
