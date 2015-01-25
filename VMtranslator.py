@@ -378,6 +378,8 @@ def writePushPop (command, segment, index):
 
 def writeInit(): # Writes Bootstrap Code command
     
+    print "Writing Bootstrap Code\n\"
+    
     out_file.write("// Bootstrap Code:\n")
     code_snippet = "@256\nD=A\n@SP\nM=D\ncall Sys.init 0\n"
     out_file.write(code_snippet)
