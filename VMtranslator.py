@@ -97,8 +97,8 @@ def process_file(source_file):
             writeFunction(arg1(current_command), arg2(current_command))
         if commandType(current_command) == "C_RETURN":
             writeReturn()
-
-        # Add if C_CALL here
+        if commandType(current_command) == "C_CALL":
+            writeCall(arg1(current_command), arg2(current_command))
 
         print "\n"
         line_number = line_number + 1
@@ -407,10 +407,24 @@ def writeFunction(functionName, numLocals):
     out_file.write(code_snippet)
     return
 
+
 def writeReturn():
 
     out_file.write("// write return\n") # Comment line
     code_snippet = "@LCL\nD=M\n@7\nM=D\n@7\nD=M\n@5\nD=D-A\nA=D\nD=M\n@8\nM=D\n@SP\nA=M-1\nD=M\nM=0\n@SP\nM=M-1\n@ARG\nA=M\nM=D\n@ARG\nD=M\nD=D+1\n@SP\nM=D\n@7\nD=M\n@1\nD=D-A\nA=D\nD=M\n@THAT\nM=D\n@7\nD=M\n@2\nD=D-A\nA=D\nD=M\n@THIS\nM=D\n@7\nD=M\n@3\nD=D-A\nA=D\nD=M\n@ARG\nM=D\n@7\nD=M\n@4\nD=D-A\nA=D\nD=M\n@LCL\nM=D\n@8\nA=M\n0;JMP\n"
+    out_file.write(code_snippet)
+    return
+
+
+def writeCall(functionName, numArgs)
+
+    global current_command
+    global current_function_name
+    
+    current_function_name = functionName
+
+    out_file.write("// write call " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
+    code_snippet = "@" + functionName + "$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M@" + numArgs +"\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@" + functionName  + "\n0; JMP\n(" + functionName + "$return-address)"
     out_file.write(code_snippet)
     return
 
