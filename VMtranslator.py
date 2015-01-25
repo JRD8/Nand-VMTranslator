@@ -29,6 +29,7 @@ def input_eval(source_input):
 
 def process_input(source_input, input_type, source_path):
     
+    # COMMENT OUT THIS LINE IF NO BOOTSTRAP CODE
     writeInit() # Process bootstrap code
 
     if input_type == "file":
@@ -46,6 +47,8 @@ def process_input(source_input, input_type, source_path):
 def process_file(source_file):
 
     code_lines = parserConstructor(source_file)
+    
+    print "Processing: " + source_file + "\n"
 
     out_file.write("\n// SOURCE VM CODE FOR: " + source_file + "\n\n")
     for line in code_lines: # Write code lines as comments
@@ -378,7 +381,7 @@ def writePushPop (command, segment, index):
 
 def writeInit(): # Writes Bootstrap Code command
     
-    print "Writing Bootstrap Code\n\"
+    print "Writing Bootstrap Code\n"
     
     out_file.write("// Bootstrap Code:\n")
     code_snippet = "@256\nD=A\n@SP\nM=D\ncall Sys.init 0\n"
