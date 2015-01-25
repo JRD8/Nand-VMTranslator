@@ -416,7 +416,7 @@ def writeReturn():
     return
 
 
-def writeCall(functionName, numArgs)
+def writeCall(functionName, numArgs):
 
     global current_command
     global current_function_name
@@ -424,7 +424,7 @@ def writeCall(functionName, numArgs)
     current_function_name = functionName
 
     out_file.write("// write call " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
-    code_snippet = "@" + functionName + "$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M@" + numArgs +"\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@" + functionName  + "\n0; JMP\n(" + functionName + "$return-address)"
+    code_snippet = "@" + functionName + "$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M@" + numArgs +"\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@" + functionName  + "\n0; JMP\n(" + functionName + "$return-address)\n"
     out_file.write(code_snippet)
     return
 
