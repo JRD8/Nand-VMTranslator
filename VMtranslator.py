@@ -387,7 +387,7 @@ def writeInit(): # Writes Bootstrap Code command
     print "Writing Bootstrap Code\n"
     
     out_file.write("// Bootstrap Code:\n")
-    code_snippet = "@256\nD=A\n@SP\nM=D\ncall Sys.init 0\n"
+    code_snippet = "// SP = 256\n@256\nD=A\n@SP\nM=D\n// call Sys.init 0\n@Sys.init$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M\n@0\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@Sys.init\n0; JMP\n(Sys.init$return-address)\n"
     out_file.write(code_snippet)
     return
 
