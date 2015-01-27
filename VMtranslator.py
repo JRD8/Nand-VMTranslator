@@ -87,9 +87,7 @@ def process_file(source_file):
         
         if commandType(current_command) != "C_RETURN": # "C_RETURN" has NO arguments
             print "Current Arg1: " + arg1(current_command)
-            print "Arg1 Length is " + str(len(arg1(current_command)))
             print "Current Arg2: " + arg2(current_command)
-            print "Arg2 Length is " + str(len(arg2(current_command))) + "\n"
     
         if commandType(current_command) == "C_PUSH" or commandType(current_command) == "C_POP":
             writePushPop(commandType(current_command), arg1(current_command), arg2(current_command))
@@ -490,7 +488,7 @@ def uniqueLabel():
     return label
 
 
-## MAIN ROUTINE ##
+## MAIN MODULE ##
 
 # Initalize global vars #
 # Arrays
