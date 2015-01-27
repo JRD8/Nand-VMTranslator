@@ -51,11 +51,11 @@ def process_file(source_file):
     
     print "Processing: " + source_file + "\n"
 
-    out_file.write("\n// SOURCE VM CODE FOR: " + source_file + "\n\n")
+    out_file.write("\n// ***********************************\n// SOURCE VM CODE FOR: " + source_file + "\n\n")
     for line in code_lines: # Write code lines as comments
         out_file.write("// " + line + "\n")
-    out_file.write("\n\n") # ...And some carriage returns
-    out_file.write("// OBJECT ASM CODE FOR: " + source_file + "\n\n")
+    out_file.write("\n") # ...And some carriage returns
+    out_file.write("// OBJECT ASM CODE FOR: " + source_file + "\n")
 
     # Begin iterating through commands to translate
     line_number = 0
@@ -210,7 +210,7 @@ def codewriterConstructor(source_name):
     temp = strftime("%a, %d %b %Y %X", localtime())
 
     #Write header  as comments
-    out_file.write("// VM TRANSLATED FROM: " + source_name + "\n// ON: " + temp + "\n\n")
+    out_file.write("// VM TRANSLATED FROM: " + source_name + "\n// ON: " + temp + "\n\n// ***************************\n")
 
     return out_file
 
@@ -225,45 +225,47 @@ def setFilename(out_file): ## NOT USED, although discussed in book
 
 
 def writeArithmetic(command):
-
+    
+    #TODO: FIX lt, length of command string not correct.  lt not being printed.
+    
     if command == "eq" or command == "gt" or command == "lt": # EQ, GT & LT routines
         loop1 = uniqueLabel()
         loop2 = uniqueLabel()
         if command == "eq":
-            insert1 = "// eq\n" # Comment line
+            insert1 = "\n// eq\n" # Comment line
             insert2 = "D;JEQ"
         if command == "gt":
-            insert1 = "// gt\n" # Comment line
+            insert1 = "\n// gt\n" # Comment line
             insert2 = "D;JGT"
         if command == "lt":
-            insert1 = "// lt\n" # Comment line
+            insert1 = "\n// lt\n" # Comment line
             insert2 = "D;JLT"
         code_snippet = insert1 + "@SP\nA=M\nA=A-1\nA=A-1\nD=M\nA=A+1\nD=D-M\n@" + loop1 + "\n" + insert2 + "\n@SP\nA=M\nA=A-1\nM=0\nA=A-1\nM=0\nD=A+1\n@" + loop2 + "\n0;JMP\n(" + loop1 + ")\n@SP\nA=M\nA=A-1\nM=0\nA=A-1\nM=-1\nD=A+1\n(" + loop2 + ")\n@SP\nM=D\n"
         out_file.write(code_snippet)
         return
 
     if command == "neg": # NEG routine
-        out_file.write("// neg\n") # Comment line
+        out_file.write("\n// neg\n") # Comment line
         out_file.write("@SP\nA=M\nA=A-1\nM=-M\n")
         return
 
     if command == "not": # NOT routine
-        out_file.write("// not\n") # Comment line
+        out_file.write("\n// not\n") # Comment line
         out_file.write("@SP\nA=M\nA=A-1\nM=!M\n")
         return
 
     if command == "add" or command == "sub" or command == "and" or command == "or": # ADD, SUB, AND & OR routines
         if command == "add":
-            insert1 = "// add\n" # Comment line
+            insert1 = "\n// add\n" # Comment line
             insert2 = "D=D+M"
         if command == "sub":
-            insert1 = "// sub\n" # Comment line
+            insert1 = "\n// sub\n" # Comment line
             insert2 = "D=D-M"
         if command == "and":
-            insert1 = "// and\n" # Comment line
+            insert1 = "\n// and\n" # Comment line
             insert2 = "D=D&M"
         if command == "or":
-            insert1 = "// or\n" # Comment line
+            insert1 = "\n// or\n" # Comment line
             insert2 = "D=D|M"
         code_snippet = insert1 + "@SP\nA=M\nA=A-1\nA=A-1\nD=M\nA=A+1\n" + insert2 + "\nM=0\nA=A-1\nM=D\n@0\nM=M-1\n"
         out_file.write(code_snippet)
@@ -280,20 +282,20 @@ def writePushPop (command, segment, index):
 
     if command == "C_PUSH": # PUSH routines
         if segment == "constant": # CONSTANT routine
-            out_file.write("// push constant " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// push constant " + arg2(current_command) + "\n") # Comment line
             code_snippet = "@" + arg2(current_command) + "\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
             out_file.write(code_snippet)
             return
         
         if segment == "temp": # TEMP routine
-            out_file.write("// push temp " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// push temp " + arg2(current_command) + "\n") # Comment line
             insert1 = str(5 + int(arg2(current_command)))
             code_snippet = "@" + insert1 + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
             out_file.write(code_snippet)
             return
 
         if segment == "pointer": # POINTER routines
-            out_file.write("// push pointer " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// push pointer " + arg2(current_command) + "\n") # Comment line
             if arg2(current_command) == "0": # THIS subroutine
                 insert1 = "THIS"
             if arg2(current_command) == "1": # THAT subroutine
@@ -304,26 +306,26 @@ def writePushPop (command, segment, index):
 
         if segment == "static": # STATIC routine
             global static_filename # copy the global variable for static_filename
-            out_file.write("// push static " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// push static " + arg2(current_command) + "\n") # Comment line
             insert1 = static_filename + "." + str(arg2(current_command))
             code_snippet = "@" + insert1 + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
             out_file.write(code_snippet)
             return
 
         if segment == "local": # LOCAL routine
-            out_file.write("// push local " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// push local " + arg2(current_command) + "\n") # Comment line
             insert1 = "LCL"
 
         if segment == "argument": # ARGUMENT routine
-            out_file.write("// push argument " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// push argument " + arg2(current_command) + "\n") # Comment line
             insert1 = "ARG"
 
         if segment == "this": # THIS routine
-            out_file.write("// push this " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// push this " + arg2(current_command) + "\n") # Comment line
             insert1 = "THIS"
 
         if segment == "that": # THAT routine
-            out_file.write("// push that " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// push that " + arg2(current_command) + "\n") # Comment line
             insert1 = "THAT"
 
         code_snippet = "@" + insert1 + "\nD=M\n@" + arg2(current_command) + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
@@ -333,14 +335,14 @@ def writePushPop (command, segment, index):
     if command == "C_POP": # POP routines
         
         if segment == "temp": # TEMP routine
-            out_file.write("// pop temp " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// pop temp " + arg2(current_command) + "\n") # Comment line
             insert1 = str(5 + int(arg2(current_command)))
             code_snippet = "@" + insert1 + "\nD=A\n@5\nM=D\n@SP\nA=M-1\nD=M\nM=0\n@5\nA=M\nM=D\n@SP\nM=M-1\n"
             out_file.write(code_snippet)
             return
         
         if segment == "pointer": # POINTER routines
-            out_file.write("// pop pointer " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// pop pointer " + arg2(current_command) + "\n") # Comment line
             if arg2(current_command) == "0 ": # THIS subroutine
                 insert1 = "THIS"
             if arg2(current_command) == "1 ": # THAT subroutine
@@ -351,26 +353,26 @@ def writePushPop (command, segment, index):
 
         if segment == "static" : # STATIC routine
             global static_filename # copy the global variable for static_filename
-            out_file.write("// pop static " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// pop static " + arg2(current_command) + "\n") # Comment line
             insert1 = static_filename + "." + str(arg2(current_command))
             code_snippet = "@SP\nA=M-1\nD=M\nM=0\n@" + insert1 + "\nM=D\n@SP\nM=M-1\n"
             out_file.write(code_snippet)
             return
         
         if segment == "local": # LOCAL routine
-            out_file.write("// pop local " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// pop local " + arg2(current_command) + "\n") # Comment line
             insert1 = "LCL"
 
         if segment == "argument": # ARGUMENT routine
-            out_file.write("// pop argument " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// pop argument " + arg2(current_command) + "\n") # Comment line
             insert1 = "ARG"
 
         if segment == "this": # THIS routine
-            out_file.write("// pop this " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// pop this " + arg2(current_command) + "\n") # Comment line
             insert1 = "THIS"
 
         if segment == "that": # THAT routine
-            out_file.write("// pop that " + arg2(current_command) + "\n") # Comment line
+            out_file.write("\n// pop that " + arg2(current_command) + "\n") # Comment line
             insert1 = "THAT"
 
         code_snippet = "@" + insert1 + "\nD=M\n@" + arg2(current_command) + "\nD=D+A\n@5\nM=D\n@SP\nA=M-1\nD=M\nM=0\n@5\nA=M\nM=D\n@SP\nM=M-1\n"
@@ -386,8 +388,8 @@ def writeInit(): # Writes Bootstrap Code command
     
     print "Writing Bootstrap Code\n"
     
-    out_file.write("// Bootstrap Code:\n")
-    code_snippet = "// SP = 256\n@256\nD=A\n@SP\nM=D\n// call Sys.init 0\n@Sys.init$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M\n@0\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@Sys.init\n0; JMP\n(Sys.init$return-address)\n"
+    out_file.write("\n// Bootstrap Code:\n") # Comment line
+    code_snippet = "// SP = 256\n@256\nD=A\n@SP\nM=D\n\n// call Sys.init 0\n@Sys.init$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M\n@0\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@Sys.init\n0; JMP\n(Sys.init$return-address)\n"
     out_file.write(code_snippet)
     return
 
@@ -398,7 +400,7 @@ def writeLabel(label):
     global current_command
     global current_function_name
     
-    out_file.write("// write label " + arg1(current_command) + "\n") # Comment line
+    out_file.write("\n// label " + arg1(current_command) + "\n") # Comment line
     insert1 = arg1(current_command)
     code_snippet = "(" + current_function_name + "$" + insert1 + ")\n"
     out_file.write(code_snippet)
@@ -410,7 +412,7 @@ def writeGoto(label): # Writes C_GOTO (goto) command
     
     global current_command
     
-    out_file.write("// write goto " + arg1(current_command) + "\n") # Comment line
+    out_file.write("\n// goto " + arg1(current_command) + "\n") # Comment line
     insert1 = arg1(current_command)
     code_snippet = "@" + current_function_name + "$" + insert1 + "\n0;JMP\n"
     out_file.write(code_snippet)
@@ -422,7 +424,7 @@ def writeIf(label): # Writes C_IF (if-goto) command
     
     global current_command
     
-    out_file.write("// write if-goto " + arg1(current_command) + "\n") # Comment line
+    out_file.write("\n// if-goto " + arg1(current_command) + "\n") # Comment line
     insert1 = arg1(current_command)
     code_snippet = "@SP\nA=M-1\nD=M\nM=0\n@SP\nM=M-1\n@" + current_function_name + "$" + insert1 + "\nD;JNE\n"
     out_file.write(code_snippet)
@@ -437,7 +439,7 @@ def writeCall(functionName, numArgs): # Writes C_CALL command
     
     current_function_name = functionName
     
-    out_file.write("// write call " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
+    out_file.write("\n// call " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
     code_snippet = "@" + functionName + "$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M\n@" + numArgs +"\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@" + functionName  + "\n0; JMP\n(" + functionName + "$return-address)\n"
     out_file.write(code_snippet)
     return
@@ -446,7 +448,7 @@ def writeCall(functionName, numArgs): # Writes C_CALL command
 
 def writeReturn(): # Writes C_RETURN command
 
-    out_file.write("// write return\n") # Comment line
+    out_file.write("\n// return\n") # Comment line
     code_snippet = "@LCL\nD=M\n@7\nM=D\n@7\nD=M\n@5\nD=D-A\nA=D\nD=M\n@8\nM=D\n@SP\nA=M-1\nD=M\nM=0\n@SP\nM=M-1\n@ARG\nA=M\nM=D\n@ARG\nD=M\nD=D+1\n@SP\nM=D\n@7\nD=M\n@1\nD=D-A\nA=D\nD=M\n@THAT\nM=D\n@7\nD=M\n@2\nD=D-A\nA=D\nD=M\n@THIS\nM=D\n@7\nD=M\n@3\nD=D-A\nA=D\nD=M\n@ARG\nM=D\n@7\nD=M\n@4\nD=D-A\nA=D\nD=M\n@LCL\nM=D\n@8\nA=M\n0;JMP\n"
     out_file.write(code_snippet)
     return
@@ -459,13 +461,14 @@ def writeFunction(functionName, numLocals): # Writes C_FUNCTION command
     
     current_function_name = functionName
     
-    out_file.write("// write function " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
+    out_file.write("\n// function " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
     code_snippet = "(" + current_function_name + ")\n@" + numLocals + "\nD=A\n@5\nM=D\n@6\nM=0\n(" + current_function_name + "$InitLocals)\n@LCL\nD=M\n@6\nD=D+M\n@7\nM=D\nD=0\n@7\nA=M\nM=D\n@6\nM=M+1\nD=M\n@5\nD=M-D\n@" + current_function_name + "$InitLocals\nD;JGT\n"
     out_file.write(code_snippet)
     return
 
 
 def close(out_file):
+    out_file.write("\n// END OF FILE\n// ************\n")
     out_file.close() # close the Output File
     print "* VM to ASM Translation Complete *\n"
     return
