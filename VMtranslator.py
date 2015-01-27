@@ -226,7 +226,7 @@ def setFilename(out_file): ## NOT USED, although discussed in book
 
 def writeArithmetic(command):
     
-    #TODO: FIX lt, length of command string not correct.  lt not being printed.
+    #TODO: FIX lt, length of command string not correct.  lt not being printed.  Review entire command parsing Script
     
     if command == "eq" or command == "gt" or command == "lt": # EQ, GT & LT routines
         loop1 = uniqueLabel()
