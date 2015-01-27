@@ -87,7 +87,9 @@ def process_file(source_file):
         
         if commandType(current_command) != "C_RETURN": # "C_RETURN" has NO arguments
             print "Current Arg1: " + arg1(current_command)
+            print "Arg1 Length is " + str(len(arg1(current_command)))
             print "Current Arg2: " + arg2(current_command)
+            print "Arg2 Length is " + str(len(arg2(current_command))) + "\n"
     
         if commandType(current_command) == "C_PUSH" or commandType(current_command) == "C_POP":
             writePushPop(commandType(current_command), arg1(current_command), arg2(current_command))
@@ -173,6 +175,11 @@ def arg1(current_command):
     if commandType(current_command) == "C_RETURN":
         return
     if commandType(current_command) == "C_ARITHMETIC":
+        blank_space = current_command.find(" ")
+        if blank_space != -1:
+            return current_command[0:blank_space]
+        else:
+            return current_command
         return current_command
     start = current_command.find(" ")
     if current_command.find(" ", start + 1) != -1: # there IS an arg2
@@ -226,7 +233,6 @@ def setFilename(out_file): ## NOT USED, although discussed in book
 
 def writeArithmetic(command):
     
-    #TODO: FIX lt, length of command string not correct.  lt not being printed.  Review entire command parsing Script
     
     if command == "eq" or command == "gt" or command == "lt": # EQ, GT & LT routines
         loop1 = uniqueLabel()
