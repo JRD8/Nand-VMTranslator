@@ -438,15 +438,15 @@ def writeIf(label): # Writes C_IF (if-goto) command
 
 def writeCall(functionName, numArgs): # Writes C_CALL command
     
-    #TODO: Fix so that each return address is a unique value
-    
     global current_command
     global current_function_name
+    global numCalls
     
     current_function_name = functionName
+    numCalls = numCalls + 1 # Increment counter for the number of program calls
     
     out_file.write("\n// call " + arg1(current_command) + " " + arg2(current_command) + "\n") # Comment line
-    code_snippet = "@" + functionName + "$return-address\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M\n@" + numArgs +"\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@" + functionName  + "\n0; JMP\n(" + functionName + "$return-address)\n"
+    code_snippet = "@" + functionName + "$return-address" + str(numCalls) + "\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\n@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nD=M\n@" + numArgs +"\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n@SP\nD=M\n@LCL\nM=D\n@" + functionName  + "\n0; JMP\n(" + functionName + "$return-address" + str(numCalls) + ")\n"
     out_file.write(code_snippet)
     return
 
@@ -500,6 +500,7 @@ code_lines = [] # Revised text, stripped and formatted
 # Integers
 call_counter = 1 # Counter for creating Unique Labels
 line_number = 0
+numCalls = 0 # Counter for number of program calls
 
 # Strings
 current_command = ""
