@@ -438,6 +438,8 @@ def writeIf(label): # Writes C_IF (if-goto) command
 
 def writeCall(functionName, numArgs): # Writes C_CALL command
     
+    #TODO: Fix so that each return address is a unique value
+    
     global current_command
     global current_function_name
     
