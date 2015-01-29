@@ -525,6 +525,8 @@ source_input = raw_input(">") # input source name
 #source_input = "BasicLoop.vm"
 #source_input = "FibonacciSeries.vm"
 #source_input = "SimpleFunction.vm"
+#source_input = "FibonacciElement"
+#source_input = "StaticsTest"
 
 
 # Open Source File or Directory
